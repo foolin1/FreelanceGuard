@@ -68,24 +68,39 @@ Swagger: http://localhost:3000/docs
 
 ## 7) Модель данных (важное для фронта)
 User: address (уникальный), nonce (одноразовый).
+
 Deal: title, description, clientId, freelancerId, arbiter, amount, fee, deadlineTs(BigInt unix timestamp), chainId(Int), onChainDealId(String), status.
+
 File: filename, mimeType, size, url.
+
 DealFile: связь many-to-many.
+
 Примечание: amount и fee передаются строками. deadlineTs передаётся строкой-числом и хранится как BigInt. Связка chainId + onChainDealId уникальна.
 
 ## 8) Авторизация Web3 (как делать на фронте)
 Шаг 1. Получить nonce и сообщение:
+
 GET /auth/nonce?address=0x...
 Ответ:
+
 { "address": "0x...", "nonce": "...", "message": "FreelanceGuard login nonce: ..." }
+
 Шаг 2. Подписать message кошельком через signMessage.
+
 Шаг 3. Отправить подпись:
+
 POST /auth/verify
+
 Body:
+
 { "address": "0x...", "signature": "..." }
+
 Ответ:
+
 { "token": "...", "user": { "id": "...", "address": "0x..." } }
+
 Шаг 4. Использовать токен во всех защищённых запросах:
+
 Authorization: Bearer <token>
 
 ## 9) Endpoints
@@ -96,50 +111,77 @@ GET /health
 GET /auth/nonce?address=0x...
 
 POST /auth/verify
+
 Protected (Bearer JWT):
+
 Deals:
 
 POST /deals
+
 Создание off-chain карточки сделки.
+
 Body пример:
 {
   "title": "Landing",
+  
   "description": "MVP",
+  
   "freelancerAddress": "0x...",
+  
   "arbiter": "0x...",
+  
   "amount": "100",
+  
   "fee": "2",
+  
   "deadlineTs": "1766232000",
+  
   "chainId": 11155111,
+  
   "onChainDealId": null
+  
 }
+
 GET /deals/mine
+
 Список сделок пользователя как client или freelancer.
 
 GET /deals/:id
+
 Детали сделки с файлами.
 
 PATCH /deals/:id
+
 Обновление метаданных, доступ только client.
 
 PATCH /deals/:id/link-onchain
+
 Связка с on-chain сделкой после создания в контракте.
+
 Body:
+
 { "chainId": 11155111, "onChainDealId": "42" }
+
 POST /deals/:id/files/:fileId
+
 Привязка файла к сделке, доступ участникам сделки.
+
 Files:
 
 POST /files
+
 multipart/form-data, поле file.
 
 GET /files/:id
+
 Метаданные файла.
 
 GET /files/:id/download
+
 Скачивание файла.
 
 ## 10) Рекомендованный ручной прогон для команды
+
 GET /health
 
 GET /auth/nonce
