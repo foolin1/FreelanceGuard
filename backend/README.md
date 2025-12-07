@@ -43,7 +43,7 @@ npx prisma generate
 Запустить backend.
 npm run start:dev
 
-5) Полезные команды разработки
+## 5) Полезные команды разработки
 Запуск линтера:
 npm run lint
 
@@ -62,18 +62,18 @@ npx prisma generate
 Остановка базы:
 docker compose down
 
-6) URLs
+## 6) URLs
 Health: http://localhost:3000/health
 Swagger: http://localhost:3000/docs
 
-7) Модель данных (важное для фронта)
+## 7) Модель данных (важное для фронта)
 User: address (уникальный), nonce (одноразовый).
 Deal: title, description, clientId, freelancerId, arbiter, amount, fee, deadlineTs(BigInt unix timestamp), chainId(Int), onChainDealId(String), status.
 File: filename, mimeType, size, url.
 DealFile: связь many-to-many.
 Примечание: amount и fee передаются строками. deadlineTs передаётся строкой-числом и хранится как BigInt. Связка chainId + onChainDealId уникальна.
 
-8) Авторизация Web3 (как делать на фронте)
+## 8) Авторизация Web3 (как делать на фронте)
 Шаг 1. Получить nonce и сообщение:
 GET /auth/nonce?address=0x...
 Ответ:
@@ -88,7 +88,7 @@ Body:
 Шаг 4. Использовать токен во всех защищённых запросах:
 Authorization: Bearer <token>
 
-9) Endpoints
+## 9) Endpoints
 Public:
 
 GET /health
@@ -139,7 +139,7 @@ GET /files/:id
 GET /files/:id/download
 Скачивание файла.
 
-10) Рекомендованный ручной прогон для команды
+## 10) Рекомендованный ручной прогон для команды
 GET /health
 
 GET /auth/nonce
@@ -160,7 +160,7 @@ POST /deals/:id/files/:fileId
 
 PATCH /deals/:id/link-onchain
 
-11) Правила разработки в команде
+## 11) Правила разработки в команде
 Работаем через ветки и PR.
 Не коммитим .env, node_modules, dist, uploads, pgdata.
 Перед PR проверяем npm run lint и запуск npm run start:dev.
