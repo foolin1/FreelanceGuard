@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  // Если вдруг потребуется для adapter-pg в твоей версии:
+  // previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  address   String   @unique
+  nonce     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dealsAsClient     Deal[] @relation("client_deals")
+  dealsAsFreelancer Deal[] @relation("freelancer_deals")
+
+  @@index([address])
+}
+
+model Deal {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+
+  clientId     String
+  freelancerId String?
+  arbiter      String?
+
+  // off-chain метаданные для UI/аналитики
+  amount String?
+  fee    String?
+
+  // дедлайн как unix timestamp (секунды или миллисекунды — выберите один стандарт)
+  deadlineTs BigInt?
+
+  // связка с on-chain
+  chainId       Int?
+  onChainDealId String?
+
+  status String @default("DRAFT")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client     User  @relation("client_deals", fields: [clientId], references: [id])
+  freelancer User? @relation("freelancer_deals", fields: [freelancerId], references: [id])
+
+  files DealFile[]
+
+  // чтобы одну on-chain сделку нельзя было связать с двумя off-chain карточками
+  @@unique([chainId, onChainDealId])
+  @@index([clientId])
+  @@index([freelancerId])
+  @@index([status])
+}
+
+model File {
+  id        String   @id @default(uuid())
+  filename  String
+  mimeType  String?
+  size      Int?
+  url       String
+  createdAt DateTime @default(now())
+
+  deals DealFile[]
+}
+
+model DealFile {
+  dealId String
+  fileId String
+
+  deal Deal @relation(fields: [dealId], references: [id])
+  file File @relation(fields: [fileId], references: [id])
+
+  @@id([dealId, fileId])
+}

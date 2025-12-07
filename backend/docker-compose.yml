@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    container_name: freelanceguard_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fg
+      POSTGRES_PASSWORD: fg
+      POSTGRES_DB: freelanceguard
+    ports:
+      - "5433:5432"
+    volumes:
+      - fg_pg_data:/var/lib/postgresql/data
+
+volumes:
+  fg_pg_data:
